@@ -14,10 +14,14 @@ class Tree {
     static int getHeightHelper(Node<T>* cur, int curHeight = 0);
     static Node<T>* findElemHelper(Node<T>* cur, T elem);
     static void clearHelper(Node<T>* &cur);
+    Node<T>* copyTree(Node<T>* &cur_copy, Node<T>* cur);
 
     Node<T>* root;
 public:
     Tree() : root(nullptr) {}
+
+    Tree(const Tree &other);
+    Tree& operator=(const Tree& other);
 
     void addEl(T elem);
     void delEl(T elem);
@@ -40,6 +44,18 @@ public:
     [[nodiscard]] T minEl() const;
     [[nodiscard]] T maxEl() const;
 };
+
+template <typename T>
+Tree<T>& Tree<T>::operator=(const Tree& other) {
+    if (this == &other) {
+        return *this;
+    }
+
+    clearHelper(root);
+    copyTree(root, other.root);
+
+    return *this;
+}
 
 template <typename T>
 void Tree<T>::printBfs() const {
@@ -92,6 +108,30 @@ void Tree<T>::clearHelper(Node<T>*& cur) {
     delete cur;
     cur = nullptr;
 }
+
+template <typename T>
+Tree<T>::Tree(const Tree& other) {
+    copyTree(root, other.root);
+}
+
+template <typename T>
+Node<T>* Tree<T>::copyTree(Node<T>* &cur_copy, Node<T>* cur) {
+    if (cur == nullptr) {
+        return nullptr;
+    }
+
+    // Node of the new tree
+    cur_copy = new Node<T>(cur->data);
+    if (cur->left != nullptr) {
+        cur_copy->left = copyTree(cur_copy->left, cur->left);
+    }
+    if (cur->right != nullptr) {
+        cur_copy->right = copyTree(cur_copy->right, cur->right);
+    }
+
+    return cur_copy;
+}
+
 
 template <typename T>
 void Tree<T>::clear() {
@@ -355,6 +395,7 @@ T Tree<T>::maxEl() const {
 
     return cur->data;
 }
+
 
 template <typename T>
 void Tree<T>::addEl(T elem) {
