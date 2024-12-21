@@ -27,6 +27,7 @@ public:
     void printPreOrder() const;
     void printBfs() const;
 
+    Node<T>* getRoot() const {return root;}
 
     void clear();
 
@@ -262,6 +263,10 @@ void Tree<T>::delEl(T elem) {
         }
 
         delete cur;
+        // Case when the sheet it is the root
+        if (cur == root) {
+            root = nullptr;
+        }
     }
     // Two children
     else if (cur->left != nullptr && cur->right != nullptr) {
@@ -292,6 +297,19 @@ void Tree<T>::delEl(T elem) {
     }
     // Only one child
     else {
+        // Case when the sheet it is the root
+        if (cur == root) {
+            if (root->right != nullptr) {
+                root = root->right;
+            }
+            else {
+                root = root->left;
+            }
+
+            delete cur;
+            return;
+        }
+
         if (cur->right != nullptr) {
             if (parent->left == cur) {
                 parent->left = cur->right;
